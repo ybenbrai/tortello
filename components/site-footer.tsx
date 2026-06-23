@@ -1,14 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { Facebook, Instagram, MessageCircle, Music2 } from 'lucide-react'
+import { Camera, Share2, MessageCircle, Music2 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { useLanguage } from '@/components/providers'
 
 const socials = [
   { label: 'WhatsApp', href: 'https://wa.me/212600000000', Icon: MessageCircle },
-  { label: 'Instagram', href: 'https://instagram.com', Icon: Instagram },
-  { label: 'Facebook', href: 'https://facebook.com', Icon: Facebook },
+  { label: 'Instagram', href: 'https://instagram.com', Icon: Camera },
+  { label: 'Facebook', href: 'https://facebook.com', Icon: Share2 },
   { label: 'TikTok', href: 'https://tiktok.com', Icon: Music2 },
 ]
 
