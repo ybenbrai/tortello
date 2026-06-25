@@ -1,18 +1,14 @@
 'use client'
 
-// ============================================================
-// Account Dashboard Page
-// Profile card, stats (orders/favorites/points), profile editor
-// ============================================================
-
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Gift, Heart, MapPin, Receipt } from 'lucide-react'
-import { useCart, useLanguage } from '@/components/providers'
+import { useAuth, useCart, useLanguage } from '@/components/providers'
 import { cn } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { t } = useLanguage()
+  const { user } = useAuth()
   const { points, favorites } = useCart()
   const [orderCount, setOrderCount] = useState<number | null>(null)
 
@@ -44,17 +40,19 @@ export default function ProfilePage() {
     },
   ]
 
+  if (!user) return null
+
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4 rounded-3xl border border-border bg-card p-6">
         <span className="grid size-16 place-items-center rounded-full bg-primary font-heading text-2xl font-semibold text-primary-foreground">
-          A
+          {user.name.charAt(0).toUpperCase()}
         </span>
         <div>
-          <p className="font-heading text-xl font-semibold">Amine El Mansouri</p>
+          <p className="font-heading text-xl font-semibold">{user.name}</p>
           <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPin className="size-3.5" />
-            Casablanca, Morocco
+            {user.phone}
           </p>
         </div>
       </div>
@@ -80,14 +78,9 @@ export default function ProfilePage() {
           {t('account_profile')}
         </h2>
         <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          <ProfileField label={t('name')} defaultValue="Amine El Mansouri" />
-          <ProfileField label={t('phone')} defaultValue="+212 6 12 34 56 78" />
-          <ProfileField
-            label={t('email')}
-            defaultValue="amine@example.com"
-            type="email"
-          />
-          <ProfileField label={t('city')} defaultValue="Casablanca" />
+          <ProfileField label={t('name')} defaultValue={user.name} />
+          <ProfileField label={t('phone')} defaultValue={user.phone} />
+          <ProfileField label={t('email')} defaultValue={user.email} type="email" />
         </div>
         <button
           type="button"
