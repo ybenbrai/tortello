@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { UserPlus } from 'lucide-react'
 import { useAuth } from '@/components/providers'
@@ -10,6 +11,7 @@ import { FormField } from '@/components/form-field'
 export default function RegisterPage() {
   const { t } = useLanguage()
   const { register } = useAuth()
+  const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -28,6 +30,7 @@ export default function RegisterPage() {
     const err = await register(form.get('name') as string, form.get('email') as string, form.get('phone') as string, password)
     setLoading(false)
     if (err) setError(err)
+    else router.push('/')
   }
 
   return (

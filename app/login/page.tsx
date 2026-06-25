@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { LogIn } from 'lucide-react'
 import { useAuth } from '@/components/providers'
@@ -10,6 +11,7 @@ import { FormField } from '@/components/form-field'
 export default function LoginPage() {
   const { t } = useLanguage()
   const { login } = useAuth()
+  const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -21,6 +23,7 @@ export default function LoginPage() {
     const err = await login(form.get('email') as string, form.get('password') as string)
     setLoading(false)
     if (err) setError(err)
+    else router.push('/')
   }
 
   return (
