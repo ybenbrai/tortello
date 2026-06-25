@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// Loyalty Points Page
+// Shows points balance, earning rate, and reward redemption
+// ============================================================
+
 import { Gift, Sparkles, Star } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'
 import { cn } from '@/lib/utils'

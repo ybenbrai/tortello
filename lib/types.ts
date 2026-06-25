@@ -1,3 +1,8 @@
+// ============================================================
+// Types & Interfaces
+// Core type definitions shared across the app
+// ============================================================
+
 export type Locale = 'en' | 'fr' | 'ar'
 
 export type Localized = Record<Locale, string>
@@ -27,16 +32,6 @@ export interface Review {
   text: Localized
 }
 
-export interface DeliveryArea {
-  id: string
-  name: Localized
-  eta: string
-  fee: number
-  /* position in % on the map image */
-  x: number
-  y: number
-}
-
 export interface Faq {
   q: Localized
   a: Localized
@@ -53,11 +48,23 @@ export interface CartItem {
   label: Localized
 }
 
+export interface CouponInfo {
+  code: string
+  discount: number
+}
+
+export interface UserInfo {
+  id: string
+  name: string
+  email: string
+  phone: string
+}
+
 export interface OrderRecord {
   id: string
   date: string
   total: number
   status: 'preparing' | 'on-the-way' | 'delivered'
   items: { label: Localized; quantity: number }[]
-  city: Localized
+  address: string
 }

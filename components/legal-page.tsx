@@ -23,11 +23,7 @@ export function LegalPage({
         {t(titleKey)}
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {locale === 'fr'
-          ? 'Dernière mise à jour : juin 2026'
-          : locale === 'ar'
-            ? 'آخر تحديث: يونيو 2026'
-            : 'Last updated: June 2026'}
+        {t('last_updated')}
       </p>
       <div className="mt-8 space-y-8">
         {sections.map((section, i) => (

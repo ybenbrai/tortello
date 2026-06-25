@@ -1,24 +1,21 @@
 'use client'
 
+// ============================================================
+// Contact Page
+// Contact form + WhatsApp chat CTA
+// ============================================================
+
 import { useState } from 'react'
 import {
-  Camera,
   CheckCircle2,
   Mail,
   MapPin,
   MessageCircle,
-  Music2,
   Phone,
-  Share2,
 } from 'lucide-react'
 import { useLanguage } from '@/components/providers'
-
-const socials = [
-  { label: 'WhatsApp', href: 'https://wa.me/212600000000', Icon: MessageCircle },
-  { label: 'Instagram', href: 'https://instagram.com', Icon: Camera },
-  { label: 'Facebook', href: 'https://facebook.com', Icon: Share2 },
-  { label: 'TikTok', href: 'https://tiktok.com', Icon: Music2 },
-]
+import { FormField } from '@/components/form-field'
+import { SOCIAL_LINKS, ContactLine } from '@/lib/contact'
 
 export default function ContactPage() {
   const { t } = useLanguage()
@@ -51,10 +48,10 @@ export default function ContactPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
-              <Field label={t('name')} name="name" />
+              <FormField label={t('name')} name="name" />
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label={t('phone')} name="phone" type="tel" />
-                <Field label={t('email')} name="email" type="email" />
+                <FormField label={t('phone')} name="phone" type="tel" />
+                <FormField label={t('email')} name="email" type="email" />
               </div>
               <div>
                 <label
@@ -108,7 +105,7 @@ export default function ContactPage() {
               {t('nav_contact')}
             </p>
             <div className="mt-4 flex gap-2">
-              {socials.map(({ label, href, Icon }) => (
+              {SOCIAL_LINKS.map(({ label, href, Icon }) => (
                 <a
                   key={label}
                   href={href}
@@ -128,44 +125,4 @@ export default function ContactPage() {
   )
 }
 
-function Field({
-  label,
-  name,
-  type = 'text',
-}: {
-  label: string
-  name: string
-  type?: string
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="mb-1.5 block text-sm font-medium">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required
-        className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30"
-      />
-    </div>
-  )
-}
 
-function ContactLine({
-  Icon,
-  value,
-}: {
-  Icon: typeof Phone
-  value: string
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-secondary text-secondary-foreground">
-        <Icon className="size-4" />
-      </span>
-      <span className="text-sm text-foreground/90">{value}</span>
-    </div>
-  )
-}

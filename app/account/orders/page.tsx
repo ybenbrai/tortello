@@ -1,9 +1,16 @@
 'use client'
 
+// ============================================================
+// Orders Page
+// Lists all past orders fetched from API with reorder + track
+// ============================================================
+
 import Link from 'next/link'
-import { MapPin, RotateCcw } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { RotateCcw } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'
-import { sampleOrders } from '@/lib/data'
+import { fetchOrders } from '@/lib/api'
+import type { OrderRecord } from '@/lib/types'
 import type { DictKey } from '@/lib/i18n'
 import { formatPrice, cn } from '@/lib/utils'
 
@@ -17,8 +24,18 @@ export default function OrdersPage() {
   const { t, locale } = useLanguage()
   const { addItem, setOpen } = useCart()
   const cur = t('currency')
+  const [orders, setOrders] = useState<OrderRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-  function reorder(order: (typeof sampleOrders)[number]) {
+  useEffect(() => {
+    fetchOrders()
+      .then(setOrders)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false))
+  }, [])
+
+  function reorder(order: OrderRecord) {
     order.items.forEach((item, i) => {
       addItem({
         id: `reorder-${order.id}-${i}`,
@@ -34,9 +51,35 @@ export default function OrdersPage() {
     setOpen(true)
   }
 
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-40 animate-pulse rounded-3xl bg-muted" />
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-3xl border border-dashed border-border bg-card py-16 text-center">
+        <p className="text-muted-foreground">{t('orders_load_error')}</p>
+      </div>
+    )
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="rounded-3xl border border-dashed border-border bg-card py-16 text-center">
+        <p className="text-muted-foreground">{t('no_orders')}</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
-      {sampleOrders.map((order) => (
+      {orders.map((order) => (
         <div
           key={order.id}
           className="rounded-3xl border border-border bg-card p-6"
@@ -44,9 +87,8 @@ export default function OrdersPage() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="font-mono text-sm font-medium">{order.id}</p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="size-3.5" />
-                {order.city[locale]} · {order.date}
+              <p className="mt-1 text-sm text-muted-foreground">
+                {order.date}
               </p>
             </div>
             <span

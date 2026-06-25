@@ -1,6 +1,13 @@
 'use client'
 
+// ============================================================
+// Track Order Page
+// Real-time order status tracker with stage progress (received →
+// preparing → on-the-way → delivered)
+// ============================================================
+
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { use } from 'react'
 import {
   Bike,
@@ -12,7 +19,8 @@ import {
   ReceiptText,
 } from 'lucide-react'
 import { useLanguage } from '@/components/providers'
-import { sampleOrders } from '@/lib/data'
+import { fetchOrder } from '@/lib/api'
+import type { OrderRecord } from '@/lib/types'
 import type { DictKey } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
@@ -33,16 +41,46 @@ export default function TrackOrderPage({
 }) {
   const { id } = use(params)
   const { t, locale } = useLanguage()
+  const [order, setOrder] = useState<OrderRecord | null | 'loading'>('loading')
+  const [error, setError] = useState(false)
 
-  const order = sampleOrders.find((o) => o.id === id)
-  // Default to "on-the-way" for freshly placed orders not in sample data
-  const currentStatus = order?.status ?? 'on-the-way'
-  const currentIndex =
-    currentStatus === 'delivered'
-      ? 3
-      : currentStatus === 'on-the-way'
-        ? 2
-        : 1
+  useEffect(() => {
+    fetchOrder(id)
+      .then((o) => setOrder(o ?? null))
+      .catch(() => setError(true))
+  }, [id])
+
+  if (order === 'loading') {
+    return (
+      <div className="mx-auto max-w-3xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+        <Link
+          href="/account/orders"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          ← {t('account_orders')}
+        </Link>
+        <div className="mt-8 flex min-h-[40vh] items-center justify-center">
+          <div className="size-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !order) {
+    return (
+      <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center sm:px-6">
+        <p className="text-muted-foreground">{t('order_not_found')}</p>
+        <Link
+          href="/account/orders"
+          className="mt-6 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+        >
+          {t('account_orders')}
+        </Link>
+      </div>
+    )
+  }
+
+  const currentIndex = stageOrder.indexOf(order.status)
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
@@ -120,7 +158,7 @@ export default function TrackOrderPage({
         <div className="mt-6 rounded-3xl border border-border bg-card p-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="size-4 text-accent" />
-            {order.city[locale]}
+            {order.address}
           </div>
           <ul className="mt-4 space-y-2 text-sm">
             {order.items.map((item, i) => (

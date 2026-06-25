@@ -3,24 +3,24 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Menu, ShoppingBag, User, X } from 'lucide-react'
+import { LogIn, LogOut, Menu, ShoppingBag, User, UserPlus, X } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { useCart, useLanguage } from '@/components/providers'
+import { useAuth, useCart, useLanguage } from '@/components/providers'
 import type { DictKey } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 const links: { href: string; key: DictKey }[] = [
   { href: '/', key: 'nav_home' },
   { href: '/menu', key: 'nav_menu' },
-  { href: '/delivery', key: 'nav_delivery' },
   { href: '/about', key: 'nav_about' },
   { href: '/contact', key: 'nav_contact' },
 ]
 
 export function SiteHeader() {
   const { t } = useLanguage()
+  const { user, loading, logout } = useAuth()
   const { count, setOpen } = useCart()
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
@@ -72,13 +72,32 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <LanguageSwitcher className="hidden sm:inline-flex" />
           <ThemeToggle />
-          <Link
-            href="/account"
-            aria-label={t('nav_account')}
-            className="hidden size-9 place-items-center rounded-full border border-border bg-background/60 text-foreground transition-colors hover:bg-muted sm:grid"
-          >
-            <User className="size-4" />
-          </Link>
+          {!loading && (user ? (
+            <Link
+              href="/account"
+              aria-label={t('nav_account')}
+              className="hidden size-9 place-items-center rounded-full border border-border bg-background/60 text-foreground transition-colors hover:bg-muted sm:grid"
+            >
+              <User className="size-4" />
+            </Link>
+          ) : (
+            <div className="hidden items-center gap-1 sm:flex">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <LogIn className="size-3.5" />
+                {t('login')}
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground transition-transform hover:scale-105"
+              >
+                <UserPlus className="size-3.5" />
+                {t('register')}
+              </Link>
+            </div>
+          ))}
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -121,12 +140,38 @@ export function SiteHeader() {
                 {t(l.key)}
               </Link>
             ))}
-            <Link
-              href="/account"
-              className="rounded-lg px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted"
-            >
-              {t('nav_account')}
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/account"
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted"
+                >
+                  {t('nav_account')}
+                </Link>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted"
+                >
+                  <LogOut className="size-4" />
+                  {t('logout')}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted"
+                >
+                  {t('login')}
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-lg px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted"
+                >
+                  {t('register')}
+                </Link>
+              </>
+            )}
             <div className="mt-2 px-1">
               <LanguageSwitcher />
             </div>

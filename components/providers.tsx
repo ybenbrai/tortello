@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// App Providers
+// Language, Theme, and Cart context providers + hooks
+// ============================================================
+
 import {
   createContext,
   useCallback,
@@ -8,7 +13,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import type { CartItem, Locale } from '@/lib/types'
+import { useRouter } from 'next/navigation'
+import type { CartItem, Locale, UserInfo } from '@/lib/types'
 import { translate, type DictKey, LOCALES } from '@/lib/i18n'
 import {
   DELIVERY_FEE_DEFAULT,
@@ -56,7 +62,65 @@ interface CartCtx {
 
 const CartContext = createContext<CartCtx | null>(null)
 
+/* ---------------- Auth ---------------- */
+
+interface AuthCtx {
+  user: UserInfo | null
+  loading: boolean
+  login: (email: string, password: string) => Promise<string | null>
+  register: (name: string, email: string, phone: string, password: string) => Promise<string | null>
+  logout: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthCtx | null>(null)
+
 export function AppProviders({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+
+  /* auth */
+  const [user, setUser] = useState<UserInfo | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data?.user) setUser(data.user) })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const login = useCallback(async (email: string, password: string): Promise<string | null> => {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    const data = await res.json()
+    if (!res.ok) return data.error || 'Login failed'
+    setUser(data.user)
+    return null
+  }, [])
+
+  const register = useCallback(async (name: string, email: string, phone: string, password: string): Promise<string | null> => {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, password }),
+    })
+    const data = await res.json()
+    if (!res.ok) return data.error || 'Registration failed'
+    setUser(data.user)
+    return null
+  }, [])
+
+  const logout = useCallback(async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    setUser(null)
+    router.push('/')
+  }, [router])
+
+  const authValue = useMemo(() => ({ user, loading, login, register, logout }), [user, loading, login, register, logout])
+
   /* language */
   const [locale, setLocaleState] = useState<Locale>('en')
   /* theme */
@@ -209,11 +273,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   )
 
   return (
-    <LanguageContext.Provider value={languageValue}>
-      <ThemeContext.Provider value={themeValue}>
-        <CartContext.Provider value={cartValue}>{children}</CartContext.Provider>
-      </ThemeContext.Provider>
-    </LanguageContext.Provider>
+    <AuthContext.Provider value={authValue}>
+      <LanguageContext.Provider value={languageValue}>
+        <ThemeContext.Provider value={themeValue}>
+          <CartContext.Provider value={cartValue}>{children}</CartContext.Provider>
+        </ThemeContext.Provider>
+      </LanguageContext.Provider>
+    </AuthContext.Provider>
   )
 }
 
@@ -232,5 +298,11 @@ export function useTheme() {
 export function useCart() {
   const ctx = useContext(CartContext)
   if (!ctx) throw new Error('useCart must be used within AppProviders')
+  return ctx
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth must be used within AppProviders')
   return ctx
 }

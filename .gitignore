@@ -13,3 +13,8 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+tortello.db
+tortello.db-wal
+tortello.db-shm
+tortello.postman_collection.json
+tsconfig.tsbuildinfo

@@ -1,15 +1,21 @@
 'use client'
 
+// ============================================================
+// Menu Builder
+// Step-by-step tortelloni customization with filling, style,
+// sauce, extras selector and live summary
+// ============================================================
+
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Check, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'
 import {
-  fillings,
-  cookingStyles,
-  sauces,
-  extras as extrasData,
-} from '@/lib/data'
+  fetchFillings,
+  fetchStyles,
+  fetchSauces,
+  fetchExtras,
+} from '@/lib/api'
 import type { DictKey } from '@/lib/i18n'
 import type { Locale, Localized, OptionItem } from '@/lib/types'
 import { formatPrice, cn } from '@/lib/utils'
@@ -27,22 +33,54 @@ export function MenuBuilder() {
   const { addItem } = useCart()
   const cur = t('currency')
 
-  const [filling, setFilling] = useState(fillings[0].id)
-  const [style, setStyle] = useState(cookingStyles[0].id)
-  const [sauce, setSauce] = useState(sauces[0].id)
+  const [fillings, setFillings] = useState<OptionItem[]>([])
+  const [cookingStyles, setCookingStyles] = useState<OptionItem[]>([])
+  const [sauces, setSauces] = useState<OptionItem[]>([])
+  const [extrasData, setExtrasData] = useState<OptionItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [menuError, setMenuError] = useState(false)
+
+  const [filling, setFilling] = useState('')
+  const [style, setStyle] = useState('')
+  const [sauce, setSauce] = useState('')
   const [chosenExtras, setChosenExtras] = useState<string[]>([])
   const [qty, setQty] = useState(1)
 
-  const selFilling = fillings.find((f) => f.id === filling)!
-  const selStyle = cookingStyles.find((s) => s.id === style)!
-  const selSauce = sauces.find((s) => s.id === sauce)!
+  useEffect(() => {
+    async function load() {
+      try {
+        const [f, st, sa, e] = await Promise.all([
+          fetchFillings(),
+          fetchStyles(),
+          fetchSauces(),
+          fetchExtras(),
+        ])
+        setFillings(f)
+        setCookingStyles(st)
+        setSauces(sa)
+        setExtrasData(e)
+        setFilling(f[0]?.id ?? '')
+        setStyle(st[0]?.id ?? '')
+        setSauce(sa[0]?.id ?? '')
+      } catch {
+        setMenuError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const selFilling = fillings.find((f) => f.id === filling)
+  const selStyle = cookingStyles.find((s) => s.id === style)
+  const selSauce = sauces.find((s) => s.id === sauce)
 
   const unitPrice = useMemo(() => {
     const extrasTotal = chosenExtras.reduce(
       (acc, id) => acc + (extrasData.find((e) => e.id === id)?.price ?? 0),
       0,
     )
-    return selFilling.price + selStyle.price + selSauce.price + extrasTotal
+    return (selFilling?.price ?? 0) + (selStyle?.price ?? 0) + (selSauce?.price ?? 0) + extrasTotal
   }, [selFilling, selStyle, selSauce, chosenExtras])
 
   function toggleExtra(id: string) {
@@ -55,7 +93,7 @@ export function MenuBuilder() {
     const join = (a: string, b: string, c: string) => `${a} · ${b} · ${c}`
     const out = {} as Localized
     ;(['en', 'fr', 'ar'] as Locale[]).forEach((l) => {
-      out[l] = join(selFilling.name[l], selStyle.name[l], selSauce.name[l])
+      out[l] = join(selFilling?.name[l] ?? '', selStyle?.name[l] ?? '', selSauce?.name[l] ?? '')
     })
     return out
   }
@@ -72,6 +110,22 @@ export function MenuBuilder() {
       label: buildLabel(),
     })
     setQty(1)
+  }
+
+  if (menuError) {
+    return (
+      <div className="mx-auto flex max-w-7xl items-center justify-center px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+        <p className="text-muted-foreground">Failed to load menu. Please try again later.</p>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="mx-auto flex max-w-7xl items-center justify-center px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+        <div className="size-8 animate-spin rounded-full border-4 border-border border-t-accent" />
+      </div>
+    )
   }
 
   return (
@@ -136,8 +190,8 @@ export function MenuBuilder() {
           <div className="overflow-hidden rounded-3xl border border-border bg-card">
             <div className="relative aspect-[4/3]">
               <Image
-                src={selFilling.image || '/placeholder.svg'}
-                alt={selFilling.name[locale]}
+                src={selFilling?.image || '/placeholder.svg'}
+                alt={selFilling?.name?.[locale] ?? ''}
                 fill
                 sizes="360px"
                 className="object-cover"
@@ -148,9 +202,9 @@ export function MenuBuilder() {
                 {t('your_selection')}
               </h2>
               <dl className="mt-4 space-y-2.5 text-sm">
-                <SummaryRow label={t('step_filling')} value={selFilling.name[locale]} />
-                <SummaryRow label={t('step_style')} value={selStyle.name[locale]} />
-                <SummaryRow label={t('step_sauce')} value={selSauce.name[locale]} />
+                <SummaryRow label={t('step_filling')} value={selFilling?.name?.[locale] ?? ''} />
+                <SummaryRow label={t('step_style')} value={selStyle?.name?.[locale] ?? ''} />
+                <SummaryRow label={t('step_sauce')} value={selSauce?.name?.[locale] ?? ''} />
                 <SummaryRow
                   label={t('step_extras')}
                   value={
@@ -256,14 +310,7 @@ function Step({
         <h2 className="font-heading text-2xl font-semibold">{t(titleKey)}</h2>
       </div>
 
-      <div
-        className={cn(
-          'mt-5 grid gap-4',
-          withImages
-            ? 'sm:grid-cols-2 lg:grid-cols-2'
-            : 'sm:grid-cols-2 lg:grid-cols-2',
-        )}
-      >
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         {options.map((opt) => {
           const isSel = selected.includes(opt.id)
           return (

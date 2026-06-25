@@ -1,3 +1,8 @@
+// ============================================================
+// Root Layout
+// Fonts, metadata, providers, site header/footer, cart drawer
+// ============================================================
+
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Fraunces } from 'next/font/google'
@@ -22,7 +27,6 @@ export const metadata: Metadata = {
   title: 'Tortello — Fresh Tortelloni Delivered Across Morocco',
   description:
     'Premium tortelloni delivery in Morocco. Choose your filling, cooking style and sauce. Fresh, fast and beautifully packaged to your door.',
-  generator: 'v0.app',
   icons: {
     icon: [
       { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
@@ -52,7 +56,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} bg-background`}
       suppressHydrationWarning
     >
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <AppProviders>
           <SiteHeader />
           <main className="min-h-screen">{children}</main>

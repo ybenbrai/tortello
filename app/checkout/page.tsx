@@ -1,7 +1,11 @@
 'use client'
 
+// ============================================================
+// Checkout Page
+// Delivery form, payment selection, coupon validation, order summary
+// ============================================================
+
 import Link from 'next/link'
-import { useState } from 'react'
 import {
   BadgePercent,
   CheckCircle2,
@@ -10,8 +14,11 @@ import {
   ShoppingBag,
   Tag,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useCart, useLanguage } from '@/components/providers'
-import { COUPONS, deliveryAreas } from '@/lib/data'
+import { fetchCoupons } from '@/lib/api'
+import type { CouponInfo } from '@/lib/types'
+import { FormField } from '@/components/form-field'
 import { formatPrice, cn } from '@/lib/utils'
 
 export default function CheckoutPage() {
@@ -24,17 +31,24 @@ export default function CheckoutPage() {
   const [couponMsg, setCouponMsg] = useState<'ok' | 'invalid' | null>(null)
   const [payment, setPayment] = useState<'cod' | 'card'>('cod')
   const [placed, setPlaced] = useState(false)
-  const [orderId] = useState(
-    () => `TRT-${Math.floor(10000 + Math.random() * 89999)}`,
-  )
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [orderId, setOrderId] = useState<string | null>(null)
+  const [couponList, setCouponList] = useState<CouponInfo[]>([])
+
+  useEffect(() => {
+    fetchCoupons().then(setCouponList).catch(() => {})
+  }, [])
 
   const discount = subtotal * appliedRate
   const grandTotal = Math.max(0, total - discount)
 
   function applyCoupon() {
-    const rate = COUPONS[coupon.trim().toUpperCase()]
-    if (rate) {
-      setAppliedRate(rate)
+    const found = couponList.find(
+      (c) => c.code === coupon.trim().toUpperCase(),
+    )
+    if (found) {
+      setAppliedRate(found.discount)
       setCouponMsg('ok')
     } else {
       setAppliedRate(0)
@@ -42,11 +56,57 @@ export default function CheckoutPage() {
     }
   }
 
-  function placeOrder(e: React.FormEvent) {
+  async function placeOrder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setPlaced(true)
-    clear()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const form = new FormData(e.currentTarget)
+
+      const body = {
+        name: form.get('name') as string,
+        phone: form.get('phone') as string,
+        address: form.get('address') as string,
+        notes: (form.get('notes') as string) || '',
+        payment,
+        total: Math.round(grandTotal),
+        coupon: appliedRate > 0 ? coupon.trim().toUpperCase() : undefined,
+        discount: discount > 0 ? Math.round(discount) : undefined,
+        items: items.map((item) => ({
+          filling: item.filling,
+          style: item.style,
+          sauce: item.sauce,
+          extras: item.extras.join(','),
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          labelEn: item.label.en,
+          labelFr: item.label.fr,
+          labelAr: item.label.ar,
+        })),
+      }
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to place order')
+      }
+
+      const data = await res.json()
+      setOrderId(data.id)
+      setPlaced(true)
+      clear()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Something went wrong')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (placed) {
@@ -115,29 +175,11 @@ export default function CheckoutPage() {
             </h2>
             <div className="mt-5 space-y-5">
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label={t('name')} name="name" />
-                <Field label={t('phone')} name="phone" type="tel" />
+                <FormField label={t('name')} name="name" />
+                <FormField label={t('phone')} name="phone" type="tel" />
               </div>
-              <Field label={t('address')} name="address" />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="city" className="mb-1.5 block text-sm font-medium">
-                    {t('city')}
-                  </label>
-                  <select
-                    id="city"
-                    name="city"
-                    className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/30"
-                  >
-                    {deliveryAreas.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.name[locale]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Field label={t('notes')} name="notes" required={false} />
-              </div>
+              <FormField label={t('address')} name="address" />
+              <FormField label={t('notes')} name="notes" required={false} />
             </div>
           </section>
 
@@ -240,42 +282,22 @@ export default function CheckoutPage() {
               <span>{formatPrice(grandTotal, cur)}</span>
             </div>
 
+            {submitError && (
+              <p className="mt-4 text-center text-sm text-destructive">
+                {submitError}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="mt-5 w-full rounded-full bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              disabled={submitting}
+              className="mt-4 w-full rounded-full bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
             >
-              {t('place_order')}
+              {submitting ? t('placing_order') : t('place_order')}
             </button>
           </div>
         </aside>
       </form>
-    </div>
-  )
-}
-
-function Field({
-  label,
-  name,
-  type = 'text',
-  required = true,
-}: {
-  label: string
-  name: string
-  type?: string
-  required?: boolean
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="mb-1.5 block text-sm font-medium">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30"
-      />
     </div>
   )
 }

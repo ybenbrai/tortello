@@ -1,16 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { Camera, Share2, MessageCircle, Music2 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { useLanguage } from '@/components/providers'
-
-const socials = [
-  { label: 'WhatsApp', href: 'https://wa.me/212600000000', Icon: MessageCircle },
-  { label: 'Instagram', href: 'https://instagram.com', Icon: Camera },
-  { label: 'Facebook', href: 'https://facebook.com', Icon: Share2 },
-  { label: 'TikTok', href: 'https://tiktok.com', Icon: Music2 },
-]
+import { SOCIAL_LINKS } from '@/lib/contact'
 
 export function SiteFooter() {
   const { t } = useLanguage()
@@ -25,7 +18,7 @@ export function SiteFooter() {
             {t('footer_tagline')}
           </p>
           <div className="mt-5 flex gap-2">
-            {socials.map(({ label, href, Icon }) => (
+            {SOCIAL_LINKS.map(({ label, href, Icon }) => (
               <a
                 key={label}
                 href={href}
@@ -47,7 +40,6 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2.5 text-sm">
             {[
               { href: '/menu', key: 'nav_menu' as const },
-              { href: '/delivery', key: 'nav_delivery' as const },
               { href: '/about', key: 'nav_about' as const },
               { href: '/contact', key: 'nav_contact' as const },
             ].map((l) => (
@@ -71,7 +63,6 @@ export function SiteFooter() {
             {[
               { href: '/legal/privacy', key: 'privacy' as const },
               { href: '/legal/terms', key: 'terms' as const },
-              { href: '/legal/delivery', key: 'delivery_info' as const },
             ].map((l) => (
               <li key={l.href}>
                 <Link

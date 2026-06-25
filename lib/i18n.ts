@@ -1,4 +1,11 @@
+// ============================================================
+// Internationalization (i18n)
+// Translation dictionary + locale config + translate helper
+// ============================================================
+
 import type { Locale } from './types'
+
+// ── Locale Config ─────────────────────────────
 
 export const LOCALES: { code: Locale; label: string; dir: 'ltr' | 'rtl' }[] = [
   { code: 'en', label: 'EN', dir: 'ltr' },
@@ -6,16 +13,17 @@ export const LOCALES: { code: Locale; label: string; dir: 'ltr' | 'rtl' }[] = [
   { code: 'ar', label: 'ع', dir: 'rtl' },
 ]
 
+// ── Translation Dictionary ────────────────────
+
 export const dict = {
-  // nav
+  // ── Navigation ──
   nav_home: { en: 'Home', fr: 'Accueil', ar: 'الرئيسية' },
   nav_menu: { en: 'Menu', fr: 'Menu', ar: 'القائمة' },
-  nav_delivery: { en: 'Delivery Areas', fr: 'Zones de Livraison', ar: 'مناطق التوصيل' },
   nav_about: { en: 'About', fr: 'À Propos', ar: 'من نحن' },
   nav_contact: { en: 'Contact', fr: 'Contact', ar: 'تواصل' },
   nav_account: { en: 'Account', fr: 'Compte', ar: 'الحساب' },
 
-  // common
+  // ── Common / Cart ──
   order_now: { en: 'Order Now', fr: 'Commander', ar: 'اطلب الآن' },
   view_menu: { en: 'View Menu', fr: 'Voir le Menu', ar: 'عرض القائمة' },
   add_to_cart: { en: 'Add to Cart', fr: 'Ajouter au Panier', ar: 'أضف إلى السلة' },
@@ -38,7 +46,7 @@ export const dict = {
     ar: 'تصفح القائمة',
   },
 
-  // hero
+  // ── Hero ──
   hero_title: {
     en: 'Fresh Tortelloni Delivered To Your Door',
     fr: 'Tortelloni Frais Livrés à Votre Porte',
@@ -55,7 +63,7 @@ export const dict = {
     ar: 'طعام إيطالي فاخر، التوصيل أولاً',
   },
 
-  // how it works
+  // ── How It Works ──
   how_title: { en: 'How It Works', fr: 'Comment Ça Marche', ar: 'كيف يعمل' },
   how_1_t: { en: 'Build Your Bowl', fr: 'Composez Votre Bol', ar: 'كوّن طبقك' },
   how_1_d: {
@@ -76,7 +84,7 @@ export const dict = {
     ar: 'ساخن ومعبأ بأناقة، مباشرة إلى بابك.',
   },
 
-  // sections
+  // ── Sections (featured, reviews, faq) ──
   featured_title: { en: 'Featured Dishes', fr: 'Plats Vedettes', ar: 'أطباق مميزة' },
   featured_sub: {
     en: 'Signature combinations, ready in one tap.',
@@ -87,16 +95,6 @@ export const dict = {
     en: 'What Our Customers Say',
     fr: 'Ce Que Disent Nos Clients',
     ar: 'ماذا يقول عملاؤنا',
-  },
-  delivery_title: {
-    en: 'Delivery Areas',
-    fr: 'Zones de Livraison',
-    ar: 'مناطق التوصيل',
-  },
-  delivery_sub: {
-    en: 'We deliver fresh across five Moroccan cities.',
-    fr: 'Nous livrons frais dans cinq villes marocaines.',
-    ar: 'نوصل طازجاً في خمس مدن مغربية.',
   },
   faq_title: {
     en: 'Frequently Asked Questions',
@@ -109,7 +107,7 @@ export const dict = {
     ar: 'التوصيل المقدّر',
   },
 
-  // menu builder
+  // ── Menu Builder ──
   menu_title: { en: 'Build Your Tortelloni', fr: 'Composez Vos Tortelloni', ar: 'كوّن التورتيلوني' },
   menu_sub: {
     en: 'Four steps to your perfect bowl.',
@@ -125,7 +123,7 @@ export const dict = {
   quantity: { en: 'Quantity', fr: 'Quantité', ar: 'الكمية' },
   included: { en: 'Included', fr: 'Inclus', ar: 'مشمول' },
 
-  // about
+  // ── About Page ──
   about_title: { en: 'Our Story', fr: 'Notre Histoire', ar: 'قصتنا' },
   about_lead: {
     en: 'Tortello was created to bring fresh Italian comfort food to Morocco through a delivery-first experience.',
@@ -157,7 +155,7 @@ export const dict = {
     ar: 'كل طلب يُحضَّر طازجاً في يوم إرساله.',
   },
 
-  // contact
+  // ── Contact ──
   contact_title: { en: 'Get In Touch', fr: 'Contactez-Nous', ar: 'تواصل معنا' },
   contact_sub: {
     en: 'Questions, feedback or catering — we would love to hear from you.',
@@ -176,7 +174,7 @@ export const dict = {
   },
   chat_whatsapp: { en: 'Chat on WhatsApp', fr: 'Discuter sur WhatsApp', ar: 'تواصل عبر واتساب' },
 
-  // checkout
+  // ── Checkout ──
   checkout_title: { en: 'Checkout', fr: 'Paiement', ar: 'إتمام الطلب' },
   delivery_details: { en: 'Delivery Details', fr: 'Détails de Livraison', ar: 'تفاصيل التوصيل' },
   address: { en: 'Address', fr: 'Adresse', ar: 'العنوان' },
@@ -188,6 +186,7 @@ export const dict = {
   coupon: { en: 'Coupon code', fr: 'Code promo', ar: 'رمز الخصم' },
   apply: { en: 'Apply', fr: 'Appliquer', ar: 'تطبيق' },
   place_order: { en: 'Place Order', fr: 'Valider la Commande', ar: 'تأكيد الطلب' },
+  placing_order: { en: 'Placing Order…', fr: 'Commande en cours…', ar: 'جاري تأكيد الطلب…' },
   order_summary: { en: 'Order Summary', fr: 'Résumé de Commande', ar: 'ملخص الطلب' },
   order_placed: { en: 'Order Placed!', fr: 'Commande Validée !', ar: 'تم تأكيد الطلب!' },
   order_placed_d: {
@@ -196,10 +195,25 @@ export const dict = {
     ar: 'يجري تحضير التورتيلوني طازجاً. تابعه من حسابك.',
   },
   track_order: { en: 'Track Order', fr: 'Suivre la Commande', ar: 'تتبع الطلب' },
+  order_not_found: { en: 'Order not found', fr: 'Commande introuvable', ar: 'الطلب غير موجود' },
   coupon_applied: { en: 'Coupon applied', fr: 'Code appliqué', ar: 'تم تطبيق الرمز' },
   coupon_invalid: { en: 'Invalid coupon', fr: 'Code invalide', ar: 'رمز غير صالح' },
 
-  // account
+  // ── Auth ──
+  login_title: { en: 'Sign In', fr: 'Connexion', ar: 'تسجيل الدخول' },
+  login_sub: { en: 'Sign in to your account to track orders and more.', fr: 'Connectez-vous pour suivre vos commandes.', ar: 'سجل الدخول لتتبع طلباتك.' },
+  login: { en: 'Sign In', fr: 'Se Connecter', ar: 'تسجيل الدخول' },
+  register_title: { en: 'Create Account', fr: 'Créer un Compte', ar: 'إنشاء حساب' },
+  register_sub: { en: 'Create an account to save favorites and track orders.', fr: 'Créez un compte pour sauvegarder vos favoris.', ar: 'أنشئ حساباً لحفظ المفضلة وتتبع الطلبات.' },
+  register: { en: 'Sign Up', fr: 'S\'inscrire', ar: 'التسجيل' },
+  create_account: { en: 'Create Account', fr: 'Créer un Compte', ar: 'إنشاء حساب' },
+  no_account: { en: 'Don\'t have an account?', fr: 'Pas de compte ?', ar: 'ليس لديك حساب؟' },
+  have_account: { en: 'Already have an account?', fr: 'Déjà un compte ?', ar: 'لديك حساب بالفعل؟' },
+  passwords_mismatch: { en: 'Passwords do not match', fr: 'Les mots de passe ne correspondent pas', ar: 'كلمات المرور غير متطابقة' },
+  password: { en: 'Password', fr: 'Mot de passe', ar: 'كلمة المرور' },
+  confirm_password: { en: 'Confirm Password', fr: 'Confirmer le mot de passe', ar: 'تأكيد كلمة المرور' },
+  logout: { en: 'Sign Out', fr: 'Se Déconnecter', ar: 'تسجيل الخروج' },
+  // ── Account ──
   account_title: { en: 'My Account', fr: 'Mon Compte', ar: 'حسابي' },
   account_orders: { en: 'My Orders', fr: 'Mes Commandes', ar: 'طلباتي' },
   account_favorites: { en: 'Favorite Orders', fr: 'Commandes Favorites', ar: 'الطلبات المفضلة' },
@@ -207,6 +221,8 @@ export const dict = {
   account_profile: { en: 'Profile', fr: 'Profil', ar: 'الملف الشخصي' },
   reorder: { en: 'Reorder', fr: 'Recommander', ar: 'أعد الطلب' },
   view_order: { en: 'View', fr: 'Voir', ar: 'عرض' },
+  no_orders: { en: 'No orders yet.', fr: 'Aucune commande pour le moment.', ar: 'لا توجد طلبات بعد.' },
+  orders_load_error: { en: 'Failed to load orders.', fr: 'Échec du chargement des commandes.', ar: 'فشل تحميل الطلبات.' },
   no_favorites: {
     en: 'No favorites yet. Heart a dish to save it here.',
     fr: 'Aucun favori. Aimez un plat pour le sauvegarder ici.',
@@ -220,13 +236,32 @@ export const dict = {
   },
   redeem: { en: 'Redeem', fr: 'Échanger', ar: 'استبدال' },
 
-  // order tracking
+  // ── Cart Drawer ──
+  free_delivery_progress: {
+    en: 'away from free delivery',
+    fr: 'pour la livraison gratuite',
+    ar: 'للتوصيل المجاني',
+  },
+  free_delivery_unlocked: {
+    en: 'Free delivery unlocked!',
+    fr: 'Livraison gratuite débloquée !',
+    ar: 'تم تفعيل التوصيل المجاني!',
+  },
+
+  // ── Order Tracking ──
   status_preparing: { en: 'Preparing', fr: 'En préparation', ar: 'قيد التحضير' },
   status_on_the_way: { en: 'On the way', fr: 'En route', ar: 'في الطريق' },
   status_delivered: { en: 'Delivered', fr: 'Livré', ar: 'تم التوصيل' },
   order_received: { en: 'Order received', fr: 'Commande reçue', ar: 'تم استلام الطلب' },
 
-  // footer
+  // ── Legal Pages ──
+  last_updated: {
+    en: 'Last updated: June 2026',
+    fr: 'Dernière mise à jour : juin 2026',
+    ar: 'آخر تحديث: يونيو 2026',
+  },
+
+  // ── Footer ──
   footer_tagline: {
     en: 'Premium tortelloni, delivered fresh across Morocco.',
     fr: 'Tortelloni premium, livrés frais partout au Maroc.',
@@ -236,7 +271,6 @@ export const dict = {
   footer_explore: { en: 'Explore', fr: 'Explorer', ar: 'استكشف' },
   privacy: { en: 'Privacy Policy', fr: 'Politique de Confidentialité', ar: 'سياسة الخصوصية' },
   terms: { en: 'Terms & Conditions', fr: 'Conditions Générales', ar: 'الشروط والأحكام' },
-  delivery_info: { en: 'Delivery Information', fr: 'Informations de Livraison', ar: 'معلومات التوصيل' },
   rights: {
     en: 'All rights reserved.',
     fr: 'Tous droits réservés.',

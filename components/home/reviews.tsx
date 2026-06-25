@@ -1,11 +1,43 @@
 'use client'
 
+// ============================================================
+// Reviews Section
+// Customer testimonials fetched from API with star ratings
+// ============================================================
+
+import { useEffect, useState } from 'react'
 import { Quote, Star } from 'lucide-react'
 import { useLanguage } from '@/components/providers'
-import { reviews } from '@/lib/data'
+import { fetchReviews } from '@/lib/api'
+import type { Review } from '@/lib/types'
 
 export function Reviews() {
   const { t, locale } = useLanguage()
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchReviews()
+      .then(setReviews)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto h-8 w-48 animate-pulse rounded-full bg-muted" />
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-48 animate-pulse rounded-3xl bg-muted" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  if (reviews.length === 0) return null
+
   return (
     <section className="border-y border-border bg-primary text-primary-foreground">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">

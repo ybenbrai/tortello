@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// Dish Card
+// Featured dish card with image, description, price, add-to-cart
+// ============================================================
+
 import Image from 'next/image'
 import { Heart, Plus } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'

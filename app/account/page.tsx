@@ -1,21 +1,34 @@
 'use client'
 
+// ============================================================
+// Account Dashboard Page
+// Profile card, stats (orders/favorites/points), profile editor
+// ============================================================
+
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { Gift, Heart, MapPin, Receipt } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'
-import { sampleOrders } from '@/lib/data'
 import { cn } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { t } = useLanguage()
   const { points, favorites } = useCart()
+  const [orderCount, setOrderCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then((r) => r.json())
+      .then((orders) => setOrderCount(orders.length))
+      .catch(() => setOrderCount(0))
+  }, [])
 
   const stats = [
     {
       href: '/account/orders',
       icon: Receipt,
       label: t('account_orders'),
-      value: String(sampleOrders.length),
+      value: orderCount === null ? '—' : String(orderCount),
     },
     {
       href: '/account/favorites',

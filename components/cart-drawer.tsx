@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// Cart Drawer
+// Slide-over cart panel with items, totals, and checkout CTA
+// ============================================================
+
 import Link from 'next/link'
 import { Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useCart, useLanguage } from '@/components/providers'
@@ -84,18 +89,8 @@ export function CartDrawer() {
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 {remaining > 0
-                  ? `${formatPrice(remaining, cur)} ${
-                      locale === 'fr'
-                        ? 'pour la livraison gratuite'
-                        : locale === 'ar'
-                          ? 'للتوصيل المجاني'
-                          : 'away from free delivery'
-                    }`
-                  : locale === 'fr'
-                    ? 'Livraison gratuite débloquée !'
-                    : locale === 'ar'
-                      ? 'تم تفعيل التوصيل المجاني!'
-                      : 'Free delivery unlocked!'}
+                  ? `${formatPrice(remaining, cur)} ${t('free_delivery_progress')}`
+                  : t('free_delivery_unlocked')}
               </p>
             </div>
 

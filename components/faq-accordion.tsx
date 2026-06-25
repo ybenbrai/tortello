@@ -1,14 +1,44 @@
 'use client'
 
-import { useState } from 'react'
+// ============================================================
+// FAQ Accordion
+// Expandable Q&A section — data fetched from API
+// ============================================================
+
+import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useLanguage } from '@/components/providers'
-import { faqs } from '@/lib/data'
+import { fetchFaqs } from '@/lib/api'
+import type { Faq } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 export function FaqAccordion({ withHeading = true }: { withHeading?: boolean }) {
   const { t, locale } = useLanguage()
+  const [faqs, setFaqs] = useState<Faq[]>([])
+  const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState<number | null>(0)
+
+  useEffect(() => {
+    fetchFaqs()
+      .then(setFaqs)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        {withHeading && <div className="mx-auto h-8 w-48 animate-pulse rounded-full bg-muted" />}
+        <div className="mt-10 space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 animate-pulse rounded-2xl bg-muted" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  if (faqs.length === 0) return null
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">

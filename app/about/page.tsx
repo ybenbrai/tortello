@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// About Page
+// Brand story, mission, values, quality assurance
+// ============================================================
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Heart, Leaf, Sparkles, Target } from 'lucide-react'

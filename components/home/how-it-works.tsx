@@ -1,5 +1,10 @@
 'use client'
 
+// ============================================================
+// How It Works Section
+// Three-step explainer: build → cook → deliver
+// ============================================================
+
 import { ChefHat, Soup, Truck } from 'lucide-react'
 import { useLanguage } from '@/components/providers'
 import type { DictKey } from '@/lib/i18n'

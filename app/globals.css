@@ -1,3 +1,9 @@
+/* ============================================================
+   Global Styles — Tailwind v4 + Shadcn + Brand Theme
+   Contains: CSS variables, typography, gradients, animations,
+   dark/light mode, component resets
+   ============================================================ */
+
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -50,27 +56,28 @@
 
 :root {
   color-scheme: light;
-  /* cream white */
-  --background: oklch(0.972 0.013 92);
+  /* warm cream */
+  --background: oklch(0.97 0.025 78);
   /* deep green ink */
   --foreground: oklch(0.27 0.038 156);
-  --card: oklch(0.99 0.008 92);
+  --card: oklch(0.985 0.015 78);
   --card-foreground: oklch(0.27 0.038 156);
-  --popover: oklch(0.99 0.008 92);
+  --popover: oklch(0.985 0.015 78);
   --popover-foreground: oklch(0.27 0.038 156);
   /* dark green */
   --primary: oklch(0.34 0.062 154);
   --primary-foreground: oklch(0.975 0.013 92);
-  --secondary: oklch(0.925 0.022 142);
+  /* sage green */
+  --secondary: oklch(0.88 0.035 135);
   --secondary-foreground: oklch(0.3 0.05 154);
-  --muted: oklch(0.945 0.013 92);
-  --muted-foreground: oklch(0.5 0.024 152);
+  --muted: oklch(0.93 0.02 80);
+  --muted-foreground: oklch(0.5 0.03 140);
   /* gold */
   --accent: oklch(0.79 0.118 82);
   --accent-foreground: oklch(0.27 0.05 80);
   --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.885 0.016 92);
-  --input: oklch(0.885 0.016 92);
+  --border: oklch(0.85 0.022 80);
+  --input: oklch(0.85 0.022 80);
   --ring: oklch(0.79 0.118 82);
   --chart-1: oklch(0.34 0.062 154);
   --chart-2: oklch(0.55 0.08 150);
@@ -78,13 +85,13 @@
   --chart-4: oklch(0.68 0.1 90);
   --chart-5: oklch(0.45 0.07 152);
   --radius: 0.75rem;
-  --sidebar: oklch(0.99 0.008 92);
+  --sidebar: oklch(0.985 0.015 78);
   --sidebar-foreground: oklch(0.27 0.038 156);
   --sidebar-primary: oklch(0.34 0.062 154);
   --sidebar-primary-foreground: oklch(0.975 0.013 92);
-  --sidebar-accent: oklch(0.925 0.022 142);
+  --sidebar-accent: oklch(0.88 0.035 135);
   --sidebar-accent-foreground: oklch(0.3 0.05 154);
-  --sidebar-border: oklch(0.885 0.016 92);
+  --sidebar-border: oklch(0.85 0.022 80);
   --sidebar-ring: oklch(0.79 0.118 82);
 }
 
