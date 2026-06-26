@@ -232,7 +232,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       ? 0
       : DELIVERY_FEE_DEFAULT
   const total = subtotal + deliveryFee
-  const points = 1240
+  const points = 0
 
   const languageValue = useMemo(
     () => ({ locale, setLocale, t, dir }),
